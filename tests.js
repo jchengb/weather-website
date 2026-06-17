@@ -47,6 +47,27 @@ function getWeatherEmoji(code) {
   return WEATHER_EMOJIS[code] ?? "❓";
 }
 
+function toMph(kmh) {
+  return Math.round(kmh * 0.621371 * 10) / 10;
+}
+
+function getUVLabel(index) {
+  if (index <= 2) return 'Low';
+  if (index <= 5) return 'Moderate';
+  if (index <= 7) return 'High';
+  if (index <= 10) return 'Very High';
+  return 'Extreme';
+}
+
+function getWindDirection(degrees) {
+  const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  return dirs[Math.round(degrees / 45) % 8];
+}
+
+function getDayName(dateString) {
+  return new Date(dateString + 'T12:00:00').toLocaleDateString('en', { weekday: 'short' });
+}
+
 function addRecentCity(city, cities) {
   const filtered = cities.filter(c => c !== city);
   return [city, ...filtered].slice(0, 5);
@@ -93,6 +114,40 @@ assert("code 61 → 🌧️", getWeatherEmoji(61),  "🌧️");
 assert("code 71 → 🌨️", getWeatherEmoji(71),  "🌨️");
 assert("code 95 → ⛈️",  getWeatherEmoji(95),  "⛈️");
 assert("code 999 → ❓", getWeatherEmoji(999), "❓");
+
+// ─── toMph ───────────────────────────────────────────────────────────────────
+
+console.log("\ntoMph");
+assert("0 km/h → 0 mph",      toMph(0),    0);
+assert("10 km/h → 6.2 mph",   toMph(10),   6.2);
+assert("100 km/h → 62.1 mph", toMph(100),  62.1);
+
+// ─── getUVLabel ───────────────────────────────────────────────────────────────
+
+console.log("\ngetUVLabel");
+assert("0 → Low",        getUVLabel(0),  "Low");
+assert("2 → Low",        getUVLabel(2),  "Low");
+assert("3 → Moderate",   getUVLabel(3),  "Moderate");
+assert("6 → High",       getUVLabel(6),  "High");
+assert("8 → Very High",  getUVLabel(8),  "Very High");
+assert("11 → Extreme",   getUVLabel(11), "Extreme");
+
+// ─── getWindDirection ─────────────────────────────────────────────────────────
+
+console.log("\ngetWindDirection");
+assert("0° → N",    getWindDirection(0),    "N");
+assert("45° → NE",  getWindDirection(45),   "NE");
+assert("90° → E",   getWindDirection(90),   "E");
+assert("180° → S",  getWindDirection(180),  "S");
+assert("270° → W",  getWindDirection(270),  "W");
+assert("315° → NW", getWindDirection(315),  "NW");
+assert("360° → N",  getWindDirection(360),  "N");
+
+// ─── getDayName ───────────────────────────────────────────────────────────────
+
+console.log("\ngetDayName");
+assert("2026-06-17 → Wed", getDayName("2026-06-17"), "Wed");
+assert("2026-06-21 → Sun", getDayName("2026-06-21"), "Sun");
 
 // ─── addRecentCity ────────────────────────────────────────────────────────────
 
