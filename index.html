@@ -276,10 +276,37 @@
     }
 
     #recent-chips {
+      margin-bottom: 12px;
+    }
+
+    .recent-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .recent-label {
+      font-size: 0.75rem;
+      color: #a0aec0;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    .clear-all {
+      font-size: 0.8rem;
+      color: #718096;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .clear-all:hover { color: #4299e1; }
+
+    .chips-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 12px;
     }
 
     .chip {
@@ -313,6 +340,10 @@
     body.dark .chip:hover { background: #4a5568; }
     body.dark .chip-remove { color: #a0aec0; }
     body.dark .chip-remove:hover { color: #e2e8f0; }
+
+    body.dark .recent-label { color: #718096; }
+    body.dark .clear-all { color: #a0aec0; }
+    body.dark .clear-all:hover { color: #90cdf4; }
 
     .share-btn {
       width: 100%;
@@ -564,6 +595,32 @@
     function renderRecentChips(cities) {
       const container = document.getElementById('recent-chips');
       container.innerHTML = '';
+      if (cities.length === 0) return;
+
+      const header = document.createElement('div');
+      header.className = 'recent-header';
+
+      const recentLabel = document.createElement('span');
+      recentLabel.className = 'recent-label';
+      recentLabel.textContent = 'Recent';
+
+      const clearAll = document.createElement('a');
+      clearAll.className = 'clear-all';
+      clearAll.textContent = 'Clear all';
+      clearAll.href = '#';
+      clearAll.addEventListener('click', e => {
+        e.preventDefault();
+        saveRecentCities([]);
+        renderRecentChips([]);
+      });
+
+      header.appendChild(recentLabel);
+      header.appendChild(clearAll);
+      container.appendChild(header);
+
+      const chipsRow = document.createElement('div');
+      chipsRow.className = 'chips-row';
+
       cities.forEach(city => {
         const chip = document.createElement('button');
         chip.className = 'chip';
@@ -588,8 +645,10 @@
 
         chip.appendChild(label);
         chip.appendChild(removeBtn);
-        container.appendChild(chip);
+        chipsRow.appendChild(chip);
       });
+
+      container.appendChild(chipsRow);
     }
 
     async function handleSearch() {
