@@ -656,6 +656,11 @@
       const cityName = input.value.trim();
       if (!cityName) return;
 
+      if (!navigator.onLine) {
+        renderMessage('📡', 'You appear to be offline. Check your connection and try again.');
+        return;
+      }
+
       setLoading(true);
       try {
         const geo = await geocodeCity(cityName);
