@@ -94,6 +94,21 @@ Claude waits for CI to pass before asking for your merge approval.
 ```
 Validates version format, checks for uncommitted changes, runs tests, creates an annotated git tag, pushes to GitHub, and triggers `release.yml` which creates a GitHub Release with `index.html` attached.
 
+## Testing Convention
+- Unit tests live in `tests.js` — run with `node tests.js`
+- **A new test must be added for every new pure function**
+- The pre-commit hook runs `tests.js` automatically — commits are blocked if any test fails
+- No test needed for: DOM manipulation, API calls, one-liner inline logic, or existing functions that haven't changed
+- When planning a slice, explicitly identify any new pure functions and include their tests in the plan
+
+### What makes a good unit test candidate
+| Worth testing | Not worth testing |
+|---|---|
+| Pure function with clear input/output | Inline one-liner (e.g. `.split('T')[1]`) |
+| Logic that could silently break (e.g. format conversion) | DOM rendering functions |
+| Lookup tables / mappings | API fetch functions |
+| String/date formatting functions | Functions that depend on browser APIs |
+
 ## Definition of Done
 1. Searching "Taipei" returns real weather data
 2. Searching "zzzzz" shows a user-friendly error message
