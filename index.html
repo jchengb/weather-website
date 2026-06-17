@@ -307,7 +307,7 @@
     }
 
     async function fetchWeather(lat, lon) {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,apparent_temperature`;
       const res = await fetch(url);
       if (!res.ok) throw new Error('Network error');
       return res.json();
@@ -356,7 +356,7 @@
     }
 
     function renderWeather({ displayName, current }) {
-      const { temperature_2m: tempC, relative_humidity_2m: humidity, wind_speed_10m: wind, weather_code: code } = current;
+      const { temperature_2m: tempC, relative_humidity_2m: humidity, wind_speed_10m: wind, weather_code: code, apparent_temperature: feelsLikeC } = current;
 
       const result = clearResult();
       const card = document.createElement('div');
@@ -382,13 +382,18 @@
       const tempSecEl = document.createElement('div');
       tempSecEl.className = 'temp-secondary';
       tempSecEl.textContent = `${toFahrenheit(tempC)}°F`;
+      tempSecEl.style.marginBottom = '0.25rem';
+
+      const feelsLikeEl = document.createElement('div');
+      feelsLikeEl.className = 'temp-secondary';
+      feelsLikeEl.textContent = `Feels like ${feelsLikeC}°C / ${toFahrenheit(feelsLikeC)}°F`;
 
       const statsEl = document.createElement('div');
       statsEl.className = 'stats';
       statsEl.appendChild(makeStat('💧', 'Humidity', `${humidity}%`));
       statsEl.appendChild(makeStat('💨', 'Wind', `${wind} km/h`));
 
-      card.append(emojiEl, cityEl, condEl, tempMainEl, tempSecEl, statsEl);
+      card.append(emojiEl, cityEl, condEl, tempMainEl, tempSecEl, feelsLikeEl, statsEl);
       result.appendChild(card);
     }
 
