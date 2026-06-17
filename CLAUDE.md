@@ -1,6 +1,7 @@
 # Weather App — Project Conventions
 
 ## Project Links
+- **Live app**: https://jchengb.github.io/weather-website/
 - **GitHub repo**: https://github.com/jchengb/weather-website
 - **GitHub Issues** (backlog): https://github.com/jchengb/weather-website/issues
 - **GitHub Actions** (CI/CD): https://github.com/jchengb/weather-website/actions
