@@ -38,6 +38,10 @@ CLAUDE.md                         ← this file
 | `getWeatherLabel(code)` | Maps WMO weather code → human-readable string |
 | `getWeatherEmoji(code)` | Maps WMO weather code → emoji |
 | `toFahrenheit(c)` | Converts Celsius to Fahrenheit (`c * 9/5 + 32`) |
+| `toMph(kmh)` | Converts km/h to mph (`kmh * 0.621371`, rounded to 1dp) |
+| `getUVLabel(index)` | Maps UV index number → human-readable label (Low / Moderate / High / Very High / Extreme) |
+| `getWindDirection(degrees)` | Maps wind degrees → 8-point compass abbreviation (N, NE, E…) |
+| `getDayName(dateString)` | Maps ISO date string (e.g. `"2026-06-17"`) → short weekday name (e.g. `"Wed"`) |
 | `renderWeather(data)` | Updates result card DOM with merged geocoding + weather data |
 | `renderError(message)` | Displays a generic friendly error message in the result area |
 | `renderNudge()` | Shows a soft prompt when location permission is denied ("Allow location or search above") |
@@ -58,6 +62,7 @@ CLAUDE.md                         ← this file
 - **localStorage keys in use:**
   - `weather_theme` — UI preference (`"dark"` / `"light"`)
   - `weather_recent_cities` — recent city display names (JSON array of strings, max 5, most recent first)
+  - `weather_units` — unit preference (`"metric"` / `"imperial"`)
 - **Errors**: generic friendly message for all failure cases (no per-case differentiation)
 - **Geolocation denial**: show a soft nudge ("Allow location access, or search for a city above") — do not show an error
 
