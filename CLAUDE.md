@@ -61,21 +61,38 @@ CLAUDE.md                         ← this file
 
 ## Git Workflow
 
-**Every commit** — the pre-commit hook runs `node tests.js` automatically and blocks the commit if any test fails.
+### Feature Development (every slice)
+Never commit directly to `main`. Every feature follows this flow:
 
-**Every push / PR** — GitHub Actions (`ci.yml`) runs the tests again as a remote safety net.
+```
+1. Create branch    git checkout -b feature/issue-{n}-{short-description}
+2. Build & commit   Claude builds the slice, pre-commit hook runs tests
+3. Push branch      git push origin feature/issue-{n}-{short-description}
+4. Open PR          gh pr create --title "..." --body "Closes #{n}"
+5. Wait for CI      GitHub Actions runs tests on the branch
+6. Report to you    Claude reports: PR link + CI status + summary of changes
+7. You approve      Reply "yes" (or "no" to request changes)
+8. Claude merges    gh pr merge --squash --delete-branch
+```
 
-**To cut a release:**
+**Branch naming:** `feature/issue-{number}-{short-description}`
+Examples: `feature/issue-1-sunrise-sunset`, `feature/issue-4-share-link`
+
+**PR approval:** You approve in the conversation — no GitHub UI needed.
+Claude will not merge without your explicit "yes".
+
+### Every Commit
+The pre-commit hook runs `node tests.js` automatically and blocks the commit if any test fails.
+
+### Every Push / PR
+GitHub Actions (`ci.yml`) runs the tests again as a remote safety net.
+Claude waits for CI to pass before asking for your merge approval.
+
+### Cutting a Release
 ```sh
 ./release.sh v1.0.0
 ```
-This validates the version format, checks for uncommitted changes, runs tests, creates an annotated git tag, pushes the tag to GitHub, and triggers `release.yml` which creates a GitHub Release with `index.html` attached.
-
-**One-time setup required** (after creating a GitHub repo):
-```sh
-git remote add origin https://github.com/<your-username>/<your-repo>.git
-git push -u origin main
-```
+Validates version format, checks for uncommitted changes, runs tests, creates an annotated git tag, pushes to GitHub, and triggers `release.yml` which creates a GitHub Release with `index.html` attached.
 
 ## Definition of Done
 1. Searching "Taipei" returns real weather data
