@@ -274,6 +274,45 @@
       border-color: #4a5568;
       border-top-color: #4299e1;
     }
+
+    #recent-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      color: #2d3748;
+    }
+
+    .chip:hover { background: #cbd5e0; }
+
+    .chip-remove {
+      font-size: 0.75rem;
+      color: #718096;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0 0 0 2px;
+    }
+
+    .chip-remove:hover { color: #2d3748; }
+
+    body.dark .chip { background: #2d3748; color: #e2e8f0; }
+    body.dark .chip:hover { background: #4a5568; }
+    body.dark .chip-remove { color: #a0aec0; }
+    body.dark .chip-remove:hover { color: #e2e8f0; }
   </style>
 </head>
 <body>
@@ -294,6 +333,7 @@
         />
         <button id="search-btn">Search</button>
       </div>
+      <div id="recent-chips"></div>
       <div id="result" aria-live="polite" aria-atomic="true"></div>
     </main>
   </div>
@@ -471,6 +511,51 @@
       renderMessage('📍', 'Allow location access to see local weather, or search for a city above.');
     }
 
+    function addRecentCity(city, cities) {
+      const filtered = cities.filter(c => c !== city);
+      return [city, ...filtered].slice(0, 5);
+    }
+
+    function loadRecentCities() {
+      try { return JSON.parse(localStorage.getItem('weather_recent_cities') || '[]'); }
+      catch { return []; }
+    }
+
+    function saveRecentCities(cities) {
+      localStorage.setItem('weather_recent_cities', JSON.stringify(cities));
+    }
+
+    function renderRecentChips(cities) {
+      const container = document.getElementById('recent-chips');
+      container.innerHTML = '';
+      cities.forEach(city => {
+        const chip = document.createElement('button');
+        chip.className = 'chip';
+        chip.addEventListener('click', () => {
+          document.getElementById('city-input').value = city;
+          handleSearch();
+        });
+
+        const label = document.createElement('span');
+        label.textContent = city;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'chip-remove';
+        removeBtn.textContent = '×';
+        removeBtn.setAttribute('aria-label', `Remove ${city}`);
+        removeBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          const updated = loadRecentCities().filter(c => c !== city);
+          saveRecentCities(updated);
+          renderRecentChips(updated);
+        });
+
+        chip.appendChild(label);
+        chip.appendChild(removeBtn);
+        container.appendChild(chip);
+      });
+    }
+
     async function handleSearch() {
       const input = document.getElementById('city-input');
       const cityName = input.value.trim();
@@ -487,6 +572,9 @@
         const weather = await fetchWeather(geo.lat, geo.lon);
         setLoading(false);
         renderWeather({ displayName: geo.displayName, current: weather.current, daily: weather.daily });
+        const updated = addRecentCity(geo.displayName, loadRecentCities());
+        saveRecentCities(updated);
+        renderRecentChips(updated);
       } catch {
         setLoading(false);
         renderError();
@@ -544,6 +632,7 @@
 
     initTheme();
     initGeolocation();
+    renderRecentChips(loadRecentCities());
   </script>
 </body>
 </html>

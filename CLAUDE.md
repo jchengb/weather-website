@@ -55,8 +55,9 @@ CLAUDE.md                         ← this file
 - **Geocoding**: always use the first result (highest relevance) when multiple matches exist
 - **Input validation**: empty/whitespace input is caught client-side before any network call
 - **No caching**: each search triggers a fresh API call
-- **No search history** — no localStorage for data
-- **localStorage for UI preferences only** — currently: theme preference (key: `weather_theme`, values: `"dark"` / `"light"`)
+- **localStorage keys in use:**
+  - `weather_theme` — UI preference (`"dark"` / `"light"`)
+  - `weather_recent_cities` — recent city display names (JSON array of strings, max 5, most recent first)
 - **Errors**: generic friendly message for all failure cases (no per-case differentiation)
 - **Geolocation denial**: show a soft nudge ("Allow location access, or search for a city above") — do not show an error
 

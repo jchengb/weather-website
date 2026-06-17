@@ -47,6 +47,11 @@ function getWeatherEmoji(code) {
   return WEATHER_EMOJIS[code] ?? "❓";
 }
 
+function addRecentCity(city, cities) {
+  const filtered = cities.filter(c => c !== city);
+  return [city, ...filtered].slice(0, 5);
+}
+
 // ─── Test runner ──────────────────────────────────────────────────────────────
 
 let passed = 0;
@@ -88,6 +93,22 @@ assert("code 61 → 🌧️", getWeatherEmoji(61),  "🌧️");
 assert("code 71 → 🌨️", getWeatherEmoji(71),  "🌨️");
 assert("code 95 → ⛈️",  getWeatherEmoji(95),  "⛈️");
 assert("code 999 → ❓", getWeatherEmoji(999), "❓");
+
+// ─── addRecentCity ────────────────────────────────────────────────────────────
+
+console.log("\naddRecentCity");
+assert("empty list → [city]",
+  JSON.stringify(addRecentCity("Taipei, Taiwan", [])),
+  JSON.stringify(["Taipei, Taiwan"]));
+assert("new city prepended to front",
+  JSON.stringify(addRecentCity("London, United Kingdom", ["Taipei, Taiwan"])),
+  JSON.stringify(["London, United Kingdom", "Taipei, Taiwan"]));
+assert("duplicate moved to front, no double entry",
+  JSON.stringify(addRecentCity("Taipei, Taiwan", ["London, United Kingdom", "Taipei, Taiwan", "Tokyo, Japan"])),
+  JSON.stringify(["Taipei, Taiwan", "London, United Kingdom", "Tokyo, Japan"]));
+assert("6th city drops oldest, max 5 enforced",
+  JSON.stringify(addRecentCity("Paris, France", ["A", "B", "C", "D", "E"])),
+  JSON.stringify(["Paris, France", "A", "B", "C", "D"]));
 
 // ─── Summary ──────────────────────────────────────────────────────────────────
 
