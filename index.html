@@ -228,11 +228,58 @@
         font-size: 4rem;
       }
     }
+
+    #theme-toggle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      line-height: 1;
+    }
+
+    body.dark {
+      background: #1a202c;
+      color: #f7fafc;
+    }
+
+    body.dark .card {
+      background: #2d3748;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    body.dark #city-input {
+      background: #2d3748;
+      border-color: #4a5568;
+      color: #f7fafc;
+    }
+
+    body.dark .tagline,
+    body.dark .condition,
+    body.dark .temp-secondary,
+    body.dark .loading-text,
+    body.dark .message-text { color: #a0aec0; }
+
+    body.dark .stat { background: #374151; }
+    body.dark .stat-label { color: #718096; }
+    body.dark .stat-value { color: #e2e8f0; }
+    body.dark h1 { color: #f7fafc; }
+    body.dark .city-name { color: #f7fafc; }
+    body.dark .temp-main { color: #f7fafc; }
+
+    body.dark .spinner {
+      border-color: #4a5568;
+      border-top-color: #4299e1;
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <header>
+    <header style="position: relative;">
+      <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
       <h1>Weather</h1>
       <p class="tagline">Search any city for current conditions</p>
     </header>
@@ -469,11 +516,29 @@
       );
     }
 
+    function applyTheme(dark) {
+      document.body.classList.toggle('dark', dark);
+      document.getElementById('theme-toggle').textContent = dark ? '☀️' : '🌙';
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem('weather_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(saved !== null ? saved === 'dark' : prefersDark);
+    }
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const isDark = !document.body.classList.contains('dark');
+      applyTheme(isDark);
+      localStorage.setItem('weather_theme', isDark ? 'dark' : 'light');
+    });
+
     document.getElementById('search-btn').addEventListener('click', handleSearch);
     document.getElementById('city-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleSearch();
     });
 
+    initTheme();
     initGeolocation();
   </script>
 </body>
