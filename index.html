@@ -313,6 +313,31 @@
     body.dark .chip:hover { background: #4a5568; }
     body.dark .chip-remove { color: #a0aec0; }
     body.dark .chip-remove:hover { color: #e2e8f0; }
+
+    .share-btn {
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: 0.65rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: #ebf8ff;
+      color: #2b6cb0;
+      border: 1px solid #bee3f8;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .share-btn:hover { background: #bee3f8; }
+
+    body.dark .share-btn {
+      background: #2a4365;
+      color: #90cdf4;
+      border-color: #2c5282;
+    }
+
+    body.dark .share-btn:hover { background: #2c5282; }
   </style>
 </head>
 <body>
@@ -484,7 +509,18 @@
       statsEl.appendChild(makeStat('🌅', 'Sunrise', sunrise));
       statsEl.appendChild(makeStat('🌇', 'Sunset', sunset));
 
-      card.append(emojiEl, cityEl, condEl, tempMainEl, tempSecEl, feelsLikeEl, statsEl);
+      const shareBtn = document.createElement('button');
+      shareBtn.className = 'share-btn';
+      shareBtn.textContent = '🔗 Share';
+      shareBtn.addEventListener('click', () => {
+        const url = `${window.location.origin}${window.location.pathname}?city=${encodeURIComponent(displayName)}`;
+        navigator.clipboard.writeText(url).then(() => {
+          shareBtn.textContent = 'Link copied!';
+          setTimeout(() => { shareBtn.textContent = '🔗 Share'; }, 2000);
+        }).catch(() => {});
+      });
+
+      card.append(emojiEl, cityEl, condEl, tempMainEl, tempSecEl, feelsLikeEl, statsEl, shareBtn);
       result.appendChild(card);
     }
 
@@ -631,8 +667,15 @@
     });
 
     initTheme();
-    initGeolocation();
     renderRecentChips(loadRecentCities());
+    const params = new URLSearchParams(window.location.search);
+    const cityParam = params.get('city');
+    if (cityParam) {
+      document.getElementById('city-input').value = cityParam;
+      handleSearch();
+    } else {
+      initGeolocation();
+    }
   </script>
 </body>
 </html>
