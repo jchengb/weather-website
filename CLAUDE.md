@@ -1,5 +1,11 @@
 # Weather App — Project Conventions
 
+## Project Links
+- **GitHub repo**: https://github.com/jchengb/weather-website
+- **GitHub Issues** (backlog): https://github.com/jchengb/weather-website/issues
+- **GitHub Actions** (CI/CD): https://github.com/jchengb/weather-website/actions
+- **Current milestone**: Weather App v1.1
+
 ## Project Overview
 A single-page weather app where a user types a city name and sees current weather data.
 No build tools, no frameworks, no API keys required.
